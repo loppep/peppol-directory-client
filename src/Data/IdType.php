@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Loppep\PeppolDirectoryClient\Data;
 
+use JsonSerializable;
 use SimpleXMLElement;
 
-class IdType
+class IdType implements JsonSerializable
 {
     /**
      * @var string
@@ -40,5 +41,16 @@ class IdType
             (string)$element->attributes()['scheme'],
             (string)$element,
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'scheme' => $this->scheme,
+            'value' => $this->value,
+        ];
     }
 }

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Loppep\PeppolDirectoryClient\Data;
 
+use JsonSerializable;
 use SimpleXMLElement;
 
 use function array_filter;
 use function array_map;
 use function is_array;
 
-class EntityType
+class EntityType implements JsonSerializable
 {
     /**
      * @var array<int, NameType>|NameType
@@ -128,5 +129,23 @@ class EntityType
             (string)$element->regDate,
             ((string)($element->attributes()['deleted'] ?? 'false')) === 'true',
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'countryCode' => $this->countryCode,
+            'geoInfo' => $this->geoInfo,
+            'identifier' => $this->identifier,
+            'website' => $this->website,
+            'contact' => $this->contact,
+            'regDate' => $this->regDate,
+            'additionalInfo' => $this->additionalInfo,
+            'deleted' => $this->deleted,
+        ];
     }
 }

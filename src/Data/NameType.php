@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Loppep\PeppolDirectoryClient\Data;
 
+use JsonSerializable;
 use SimpleXMLElement;
 
-class NameType
+class NameType implements JsonSerializable
 {
     /**
      * @var string
@@ -42,5 +43,16 @@ class NameType
                 ? (string)$element->attributes()['lang']
                 : null,
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'language' => $this->language,
+        ];
     }
 }

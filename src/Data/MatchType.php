@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Loppep\PeppolDirectoryClient\Data;
 
+use JsonSerializable;
 use SimpleXMLElement;
 
 use function array_filter;
 use function array_map;
 use function is_array;
 
-class MatchType
+class MatchType implements JsonSerializable
 {
     /**
      * @var IdType
@@ -103,5 +104,18 @@ class MatchType
             $this->entity,
             $this->registered,
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'participantId' => $this->participantId,
+            'docTypeId' => $this->docTypeId,
+            'entity' => $this->entity,
+            'registered' => $this->registered,
+        ];
     }
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Loppep\PeppolDirectoryClient\Data;
 
+use JsonSerializable;
 use SimpleXMLElement;
 
-class ContactType
+class ContactType implements JsonSerializable
 {
     /** @var string|null */
     public ?string $type;
@@ -56,5 +57,18 @@ class ContactType
             $element->attributes()['phone'] ?? null,
             $element->attributes()['email'] ?? null,
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'type' => $this->type,
+            'name' => $this->name,
+            'phone' => $this->phone,
+            'email' => $this->email,
+        ];
     }
 }
