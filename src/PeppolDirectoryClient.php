@@ -19,6 +19,9 @@ use Throwable;
 
 use function array_filter;
 use function array_map;
+use function basename;
+use function explode;
+use function urldecode;
 
 class PeppolDirectoryClient
 {
@@ -227,7 +230,7 @@ class PeppolDirectoryClient
         $docTypeIds = [];
         foreach ($referenceUrls as $referenceUrl) {
             [$scheme, $value] = explode(
-                  '::',
+                '::',
                 basename(urldecode($referenceUrl)),
                 2
             );
