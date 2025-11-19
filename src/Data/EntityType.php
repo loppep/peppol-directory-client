@@ -107,7 +107,7 @@ class EntityType implements JsonSerializable
                 ),
             ),
             (string)$element->countryCode,
-            $element->geoInfo ?? null,
+            isset($element->geoInfo) ? (string)$element->geoInfo : null,
             array_map(
                 static fn(SimpleXMLElement $identifier): IdType => IdType::fromXml($identifier),
                 array_filter(
@@ -116,7 +116,7 @@ class EntityType implements JsonSerializable
                         : [$element->identifier]
                 ),
             ),
-            $element->website ?? null,
+            isset($element->website) ? (string)$element->website : null,
             array_map(
                 static fn(SimpleXMLElement $contact): ContactType => ContactType::fromXml($contact),
                 array_filter(
@@ -125,7 +125,7 @@ class EntityType implements JsonSerializable
                         : [$element->contact]
                 ),
             ),
-            $element->additionalInfo ?? null,
+            isset($element->additionalInfo) ? (string)$element->additionalInfo : null,
             (string)$element->regDate,
             ((string)($element->attributes()['deleted'] ?? 'false')) === 'true',
         );

@@ -52,10 +52,10 @@ class ContactType implements JsonSerializable
     public static function fromXml(SimpleXMLElement $element): ContactType
     {
         return new ContactType(
-            $element->attributes()['type'] ?? null,
-            $element->attributes()['name'] ?? null,
-            $element->attributes()['phone'] ?? null,
-            $element->attributes()['email'] ?? null,
+            isset($element->attributes()['type']) ? (string) $element->attributes()['type'] : null,
+            isset($element->attributes()['name']) ? (string) $element->attributes()['name'] : null,
+            isset($element->attributes()['phone']) ? (string) $element->attributes()['phone'] : null,
+            isset($element->attributes()['email']) ? (string) $element->attributes()['email'] : null
         );
     }
 

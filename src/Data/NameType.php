@@ -39,9 +39,7 @@ class NameType implements JsonSerializable
     {
         return new NameType(
             (string)$element,
-            isset($element->attributes()['lang'])
-                ? (string)$element->attributes()['lang']
-                : null,
+            isset($element->attributes()['lang']) ? (string)$element->attributes()['lang'] : null,
         );
     }
 
