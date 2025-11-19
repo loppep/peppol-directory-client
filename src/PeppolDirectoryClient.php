@@ -226,17 +226,12 @@ class PeppolDirectoryClient
 
         $docTypeIds = [];
         foreach ($referenceUrls as $referenceUrl) {
-            try {
-                $xml = Xml::fromResponse(
-                    $this->request($referenceUrl)
-                );
-            } catch (Throwable $error) {
-                continue;
-            }
-
-            $docTypeIds[] = IdType::fromXml(
-                $xml->ServiceMetadata->ServiceInformation->DocumentIdentifier
+            [$scheme, $value] = explode(
+                  '::',
+                basename(urldecode($referenceUrl)),
+                2
             );
+            $docTypeIds[] = new IdType($scheme, $value);
         }
 
         return $docTypeIds;
