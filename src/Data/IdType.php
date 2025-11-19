@@ -44,6 +44,18 @@ class IdType implements JsonSerializable
     }
 
     /**
+     * @param array $array
+     * @return IdType
+     */
+    public static function fromArray(array $array): IdType
+    {
+        return new IdType(
+            $array['scheme'],
+            $array['value'],
+        );
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array

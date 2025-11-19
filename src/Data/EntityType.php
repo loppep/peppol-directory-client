@@ -132,6 +132,34 @@ class EntityType implements JsonSerializable
     }
 
     /**
+     * @param array $array
+     * @return EntityType
+     */
+    public static function fromArray(array $array): EntityType
+    {
+        return new EntityType(
+            array_map(
+                static fn(array $name): NameType => NameType::fromArray($name),
+                $array['name'],
+            ),
+            $array['countryCode'],
+            $array['geoInfo'] ?? null,
+            array_map(
+                static fn(array $identifier): IdType => IdType::fromArray($identifier),
+                $array['identifier'],
+            ),
+            $array['website'] ?? null,
+            array_map(
+                static fn(array $contact): ContactType => ContactType::fromArray($contact),
+                $array['contact'],
+            ),
+            $array['additionalInfo'] ?? null,
+            $array['regDate'],
+            $array['deleted'] ?? false,
+        );
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array

@@ -107,6 +107,26 @@ class MatchType implements JsonSerializable
     }
 
     /**
+     * @param array $array
+     * @return MatchType
+     */
+    public static function fromArray(array $array): MatchType
+    {
+        return new MatchType(
+            IdType::fromArray($array['participantId']),
+            array_map(
+                static fn(array $docTypeId): IdType => IdType::fromArray($docTypeId),
+                $array['docTypeId'],
+            ),
+            array_map(
+                static fn(array $entity): EntityType => EntityType::fromArray($entity),
+                $array['entity'],
+            ),
+            $array['registered'],
+        );
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array

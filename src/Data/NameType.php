@@ -46,6 +46,18 @@ class NameType implements JsonSerializable
     }
 
     /**
+     * @param array $array
+     * @return NameType
+     */
+    public static function fromArray(array $array): NameType
+    {
+        return new NameType(
+            $array['name'],
+            $array['language'] ?? null,
+        );
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array

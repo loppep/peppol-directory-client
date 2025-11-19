@@ -60,6 +60,20 @@ class ContactType implements JsonSerializable
     }
 
     /**
+     * @param array $array
+     * @return ContactType
+     */
+    public static function fromArray(array $array): ContactType
+    {
+        return new ContactType(
+            $array['type'] ?? null,
+            $array['name'] ?? null,
+            $array['phone'] ?? null,
+            $array['email'] ?? null,
+        );
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array
