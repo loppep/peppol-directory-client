@@ -72,7 +72,7 @@ class PeppolDirectoryClient
                 continue;
             }
 
-            if (!$this->participantIdIsRegistered($smpUrl, $match->participantId)) {
+            if (!$this->isParticipantIdRegistered($smpUrl, $match->participantId)) {
                 $matches[$index] = MatchType::unregistered($match->participantId);
 
                 continue;
@@ -99,7 +99,7 @@ class PeppolDirectoryClient
             return MatchType::unregistered($participantId);
         }
 
-        if (!$this->participantIdIsRegistered($smpUrl, $participantId)) {
+        if (!$this->isParticipantIdRegistered($smpUrl, $participantId)) {
             return MatchType::unregistered($participantId);
         }
 
@@ -107,6 +107,17 @@ class PeppolDirectoryClient
             $participantId,
             $this->getSupportedDocTypeIdsForParticipantId($smpUrl, $participantId),
         );
+    }
+
+    public function isRegistered(IdType $participantId): bool
+    {
+        $smpUrl = $this->getSmpUrlForParticipantId($participantId);
+
+        if ($smpUrl === null) {
+            return false;
+        }
+
+        return $this->isParticipantIdRegistered($smpUrl, $participantId);
     }
 
     /**
@@ -180,7 +191,7 @@ class PeppolDirectoryClient
      * @param IdType $participantId
      * @return bool
      */
-    private function participantIdIsRegistered(string $smpUrl, IdType $participantId): bool
+    private function isParticipantIdRegistered(string $smpUrl, IdType $participantId): bool
     {
         try {
             $this->request($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value, 'HEAD');
