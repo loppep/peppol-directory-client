@@ -56,6 +56,16 @@ class IdType implements JsonSerializable
     }
 
     /**
+     * @param IdType $docType
+     * @return bool
+     */
+    public function isSameAs(IdType $docType): bool
+    {
+        return $this->scheme === $docType->scheme
+            && $this->value === $docType->value;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array
