@@ -103,13 +103,13 @@ class MatchType implements JsonSerializable
             IdType::fromArray($array['participantId']),
             array_map(
                 static fn(array $docTypeId): IdType => IdType::fromArray($docTypeId),
-                $array['docTypeId'] ?? [],
+                $array['docTypeId'],
             ),
             array_map(
                 static fn(array $entity): EntityType => EntityType::fromArray($entity),
-                $array['entity'] ?? [],
+                $array['entity'],
             ),
-            $array['registered'] ?? false,
+            $array['registered'],
         );
     }
 
