@@ -49,3 +49,22 @@ $directory->get(
     )
 );
 ```
+
+## Quickly check if a Peppol participant is registered
+```php
+use Http\Discovery\Psr18Client;
+use Loppep\PeppolDirectoryClient\Data\IdType;
+use Loppep\PeppolDirectoryClient\Enum\Environment;
+use Loppep\PeppolDirectoryClient\PeppolDirectoryClient;
+
+$directory = new PeppolDirectoryClient(
+    new Psr18Client(),
+    Environment::production()
+);
+$directory->isRegistered(
+    new IdType(
+        $scheme = 'iso6523-actorid-upis',
+        $value = '9930:de343985244'
+    )
+);
+```
