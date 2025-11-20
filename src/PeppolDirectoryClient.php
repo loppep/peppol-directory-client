@@ -220,7 +220,6 @@ class PeppolDirectoryClient
      */
     private function getSupportedDocTypeIdsForParticipantId(string $smpUrl, IdType $participantId): array
     {
-        dd($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value);
         try {
             $xml = Xml::fromResponse(
                 $this->request($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value)
