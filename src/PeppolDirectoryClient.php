@@ -7,6 +7,7 @@ namespace Loppep\PeppolDirectoryClient;
 use Http\Discovery\Psr18Client;
 use Loppep\PeppolDirectoryClient\Data\IdType;
 use Loppep\PeppolDirectoryClient\Data\MatchType;
+use Loppep\PeppolDirectoryClient\Data\SmpInformation;
 use Loppep\PeppolDirectoryClient\Enum\Environment;
 use Loppep\PeppolDirectoryClient\Util\Xml;
 use ParagonIE\ConstantTime\Encoding;
@@ -67,15 +68,9 @@ class PeppolDirectoryClient
         );
 
         foreach ($matches as $index => $match) {
-            $smpUrl = $this->getSmpUrlForParticipantId($match->participantId);
+            $smpInformation = $this->getSmpInformationForParticipantId($match->participantId);
 
-            if ($smpUrl === null) {
-                $matches[$index] = MatchType::unregistered($match->participantId);
-
-                continue;
-            }
-
-            if (!$this->isParticipantIdRegistered($smpUrl, $match->participantId)) {
+            if ($smpInformation === null) {
                 $matches[$index] = MatchType::unregistered($match->participantId);
 
                 continue;
@@ -83,9 +78,12 @@ class PeppolDirectoryClient
 
             $matches[$index] = $match
                 ->withDocTypeId(
-                    $this->getSupportedDocTypeIdsForParticipantId($smpUrl, $match->participantId)
+                    $this->getSupportedDocTypeIdsForParticipantId(
+                        $smpInformation,
+                        $match->participantId
+                    )
                 )
-                ->withSmpUrl($smpUrl);
+                ->withSmpUrl($smpInformation->smpUrl);
         }
 
         return $matches;
@@ -98,34 +96,57 @@ class PeppolDirectoryClient
      */
     public function get(IdType $participantId): MatchType
     {
-        $smpUrl = $this->getSmpUrlForParticipantId($participantId);
+        $smpInformation = $this->getSmpInformationForParticipantId($participantId);
 
-        if ($smpUrl === null) {
-            return MatchType::unregistered($participantId);
-        }
-
-        if (!$this->isParticipantIdRegistered($smpUrl, $participantId)) {
+        if ($smpInformation === null) {
             return MatchType::unregistered($participantId);
         }
 
         return new MatchType(
             $participantId,
-            $this->getSupportedDocTypeIdsForParticipantId($smpUrl, $participantId),
+            $this->getSupportedDocTypeIdsForParticipantId(
+                $smpInformation,
+                $participantId
+            ),
             [],
             true,
-            $smpUrl
+            $smpInformation->smpUrl,
         );
     }
 
+    /**
+     * @param IdType $participantId
+     * @return bool
+     */
     public function isRegistered(IdType $participantId): bool
+    {
+        $smpInformation = $this->getSmpInformationForParticipantId($participantId);
+
+        return $smpInformation !== null;
+    }
+
+    /**
+     * @param IdType $participantId
+     * @return SmpInformation|null
+     */
+    private function getSmpInformationForParticipantId(IdType $participantId): ?SmpInformation
     {
         $smpUrl = $this->getSmpUrlForParticipantId($participantId);
 
         if ($smpUrl === null) {
-            return false;
+            return null;
         }
 
-        return $this->isParticipantIdRegistered($smpUrl, $participantId);
+        try {
+            return new SmpInformation(
+                $smpUrl,
+                Xml::fromResponse(
+                    $this->request($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value)
+                )
+            );
+        } catch (Throwable $e) {
+            return null;
+        }
     }
 
     /**
@@ -198,41 +219,17 @@ class PeppolDirectoryClient
     }
 
     /**
-     * @param string $smpUrl
+     * @param SmpInformation $smpInformation
      * @param IdType $participantId
-     * @return bool
+     * @return array
      */
-    private function isParticipantIdRegistered(string $smpUrl, IdType $participantId): bool
+    private function getSupportedDocTypeIdsForParticipantId(SmpInformation $smpInformation, IdType $participantId): array
     {
-        try {
-            $this->request($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value, 'HEAD');
-
-            return true;
-        } catch (Throwable $error) {
-            return false;
-        }
-    }
-
-    /**
-     * @param string $smpUrl
-     * @param IdType $participantId
-     * @return array<int, IdType>|IdType[]
-     */
-    private function getSupportedDocTypeIdsForParticipantId(string $smpUrl, IdType $participantId): array
-    {
-        try {
-            $xml = Xml::fromResponse(
-                $this->request($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value)
-            );
-        } catch (Throwable $error) {
-            return [];
-        }
-
         $referenceUrls = array_map(
             static fn(SimpleXMLElement $element): ?string => isset($element->attributes()['href'])
                 ? (string)$element->attributes()['href']
                 : null,
-            array_filter($xml->xpath('//ServiceMetadataReference'))
+            array_filter($smpInformation->configuration->xpath('//ServiceMetadataReference'))
         );
 
         $docTypeIds = [];
