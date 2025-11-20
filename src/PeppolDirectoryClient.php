@@ -187,10 +187,13 @@ class PeppolDirectoryClient
             trim($regex, $delimiter)
         );
 
-        return preg_replace(
-            '/^(' . $pattern . ')$/',
-            $replacement,
-            $hostname,
+        return rtrim(
+            preg_replace(
+                '/^(' . $pattern . ')$/',
+                $replacement,
+                $hostname,
+            ),
+            '/',
         );
     }
 
@@ -217,6 +220,7 @@ class PeppolDirectoryClient
      */
     private function getSupportedDocTypeIdsForParticipantId(string $smpUrl, IdType $participantId): array
     {
+        dd($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value);
         try {
             $xml = Xml::fromResponse(
                 $this->request($smpUrl . '/' . $participantId->scheme . '::' . $participantId->value)
