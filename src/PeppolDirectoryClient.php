@@ -81,9 +81,11 @@ class PeppolDirectoryClient
                 continue;
             }
 
-            $matches[$index] = $match->withDocTypeId(
-                $this->getSupportedDocTypeIdsForParticipantId($smpUrl, $match->participantId)
-            );
+            $matches[$index] = $match
+                ->withDocTypeId(
+                    $this->getSupportedDocTypeIdsForParticipantId($smpUrl, $match->participantId)
+                )
+                ->withSmpUrl($smpUrl);
         }
 
         return $matches;
@@ -109,6 +111,9 @@ class PeppolDirectoryClient
         return new MatchType(
             $participantId,
             $this->getSupportedDocTypeIdsForParticipantId($smpUrl, $participantId),
+            [],
+            true,
+            $smpUrl
         );
     }
 

@@ -35,6 +35,11 @@ class MatchType implements JsonSerializable
     public bool $registered = true;
 
     /**
+     * @var string|null
+     */
+    public ?string $smpUrl;
+
+    /**
      * @param IdType $participantId
      * @param array<int, IdType>|IdType[] $docTypeId
      * @param array<int, EntityType>|EntityType[] $entity
@@ -44,12 +49,14 @@ class MatchType implements JsonSerializable
         IdType $participantId,
         array $docTypeId,
         array $entity = [],
-        bool $registered = true
+        bool $registered = true,
+        ?string $smpUrl = null
     ) {
         $this->participantId = $participantId;
         $this->docTypeId = $docTypeId;
         $this->entity = $entity;
         $this->registered = $registered;
+        $this->smpUrl = $smpUrl;
     }
 
     /**
@@ -110,6 +117,7 @@ class MatchType implements JsonSerializable
                 $array['entity'],
             ),
             $array['registered'],
+            $array['smpUrl'] ?? null,
         );
     }
 
@@ -138,6 +146,22 @@ class MatchType implements JsonSerializable
             $docTypeId,
             $this->entity,
             $this->registered,
+            $this->smpUrl,
+        );
+    }
+
+    /**
+     * @param string $smpUrl
+     * @return MatchType
+     */
+    public function withSmpUrl(string $smpUrl): MatchType
+    {
+        return new MatchType(
+            $this->participantId,
+            $this->docTypeId,
+            $this->entity,
+            $this->registered,
+            $this->smpUrl,
         );
     }
 
@@ -151,6 +175,7 @@ class MatchType implements JsonSerializable
             'docTypeId' => $this->docTypeId,
             'entity' => $this->entity,
             'registered' => $this->registered,
+            'smpUrl' => $this->smpUrl,
         ];
     }
 }
