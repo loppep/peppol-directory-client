@@ -7,7 +7,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
-    "paragonie/constant_time_encoding": "^2.8",
+    "paragonie/constant_time_encoding": "^2.8 || ^3.0",
     "php-http/discovery": "^1.17",
     "psr/http-client": "*",
     "psr/http-client-implementation": "*",
