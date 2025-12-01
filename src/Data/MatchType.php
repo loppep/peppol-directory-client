@@ -9,7 +9,6 @@ use SimpleXMLElement;
 
 use function array_filter;
 use function array_map;
-use function in_array;
 use function is_array;
 
 class MatchType implements JsonSerializable
@@ -129,7 +128,7 @@ class MatchType implements JsonSerializable
     {
         $filtered = array_filter(
             $this->docTypeId,
-            static fn (IdType $supportedDocTypeId) => $supportedDocTypeId->isSameAs($docTypeId),
+            static fn(IdType $supportedDocTypeId) => $supportedDocTypeId->isSameAs($docTypeId),
         );
 
         return count($filtered) > 0;
@@ -162,6 +161,22 @@ class MatchType implements JsonSerializable
             $this->entity,
             $this->registered,
             $this->smpUrl,
+        );
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function toArray(): array
+    {
+        return json_decode(
+            json_encode(
+                $this,
+                JSON_THROW_ON_ERROR
+            ),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
         );
     }
 
